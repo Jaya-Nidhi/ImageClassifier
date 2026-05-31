@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuralEye — Image Classification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="noise-overlay"></div>
+  <div class="grid-bg"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="8" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="2" fill="currentColor"/>
+            <line x1="20" y1="2" x2="20" y2="12" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="20" y1="28" x2="20" y2="38" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="2" y1="20" x2="12" y2="20" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="28" y1="20" x2="38" y2="20" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <span class="logo-text">NeuralEye</span>
+      </div>
+      <nav class="header-nav">
+        <span class="nav-badge">CNN Model</span>
+        <span class="nav-badge active">MobileNetV2</span>
+        <span class="status-dot"></span>
+        <span class="status-text">Model Ready</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Deep Learning · Computer Vision · TensorFlow.js</div>
+      <h1 class="hero-title">
+        See What<br/>
+        <span class="accent">Neural</span><br/>
+        Networks See
+      </h1>
+      <p class="hero-desc">
+        Upload any image and our MobileNetV2 convolutional neural network 
+        will classify it across 1000 ImageNet categories in milliseconds — 
+        right here in your browser.
+      </p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">1000</span>
+        <span class="stat-label">Categories</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-num">~90%</span>
+        <span class="stat-label">Top-5 Accuracy</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Client-Side</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main App -->
+  <main class="app-container">
+    <div class="app-grid">
+
+      <!-- Upload Panel -->
+      <div class="panel upload-panel">
+        <div class="panel-header">
+          <span class="panel-num">01</span>
+          <h2 class="panel-title">Input Image</h2>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-inner">
+            <div class="upload-icon">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 44 L20 30 L30 38 L42 24 L56 44" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="22" cy="26" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M32 8 L32 20 M28 12 L32 8 L36 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="upload-primary">Drop image here</p>
+            <p class="upload-secondary">or click to browse files</p>
+            <p class="upload-hint">PNG, JPG, WEBP, GIF supported</p>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+        </div>
+
+        <!-- Preview -->
+        <div class="image-preview-wrap" id="previewWrap" style="display:none;">
+          <div class="preview-header">
+            <span class="preview-label">Preview</span>
+            <button class="btn-clear" id="clearBtn">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Clear
+            </button>
+          </div>
+          <div class="preview-image-container">
+            <img id="previewImg" src="" alt="Preview" />
+            <div class="scan-line" id="scanLine"></div>
+          </div>
+          <div class="image-meta" id="imageMeta"></div>
+        </div>
+
+        <!-- Webcam -->
+        <div class="webcam-section">
+          <div class="divider"><span>or</span></div>
+          <button class="btn-webcam" id="webcamBtn">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M3 20c0-4.4 4-8 9-8s9 3.6 9 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="9" y="2" width="6" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            Use Webcam
+          </button>
+          <div class="webcam-container" id="webcamContainer" style="display:none;">
+            <video id="webcamVideo" autoplay playsinline></video>
+            <button class="btn-capture" id="captureBtn">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+              Capture
+            </button>
+            <button class="btn-stop-webcam" id="stopWebcamBtn">Stop Camera</button>
+          </div>
+        </div>
+
+        <button class="btn-classify" id="classifyBtn" disabled>
+          <span class="btn-text">Classify Image</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="panel results-panel">
+        <div class="panel-header">
+          <span class="panel-num">02</span>
+          <h2 class="panel-title">Classification Results</h2>
+        </div>
+
+        <!-- Idle State -->
+        <div class="results-idle" id="resultsIdle">
+          <div class="idle-graphic">
+            <div class="idle-circle c1"></div>
+            <div class="idle-circle c2"></div>
+            <div class="idle-circle c3"></div>
+            <svg class="idle-icon" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="30" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
+              <path d="M25 40 L35 30 L45 40 L55 30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="40" cy="40" r="4" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
+          <p class="idle-text">Upload an image to begin classification</p>
+          <p class="idle-subtext">Results will appear here with confidence scores</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="results-loading" id="resultsLoading" style="display:none;">
+          <div class="loading-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p class="loading-text" id="loadingText">Loading model...</p>
+          <div class="loading-steps">
+            <div class="step" id="step1"><span class="step-dot"></span> Initializing TensorFlow.js</div>
+            <div class="step" id="step2"><span class="step-dot"></span> Loading MobileNetV2 weights</div>
+            <div class="step" id="step3"><span class="step-dot"></span> Preprocessing image</div>
+            <div class="step" id="step4"><span class="step-dot"></span> Running inference</div>
+          </div>
+        </div>
+
+        <!-- Results State -->
+        <div class="results-output" id="resultsOutput" style="display:none;">
+          <div class="top-result" id="topResult">
+            <div class="top-result-label">Top Prediction</div>
+            <div class="top-result-name" id="topName">—</div>
+            <div class="top-result-confidence" id="topConfidence">0%</div>
+            <div class="top-result-bar">
+              <div class="top-result-fill" id="topFill"></div>
+            </div>
+          </div>
+
+          <div class="results-list-header">
+            <span>All Predictions</span>
+            <span>Confidence</span>
+          </div>
+          <div class="results-list" id="resultsList"></div>
+
+          <div class="results-meta" id="resultsMeta"></div>
+
+          <div class="results-actions">
+            <button class="btn-secondary" id="downloadBtn">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Export Results
+            </button>
+            <button class="btn-secondary" id="reclassifyBtn">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 8a6 6 0 1 1 2 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12V8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Reclassify
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confidence Visualization -->
+    <div class="panel viz-panel" id="vizPanel" style="display:none;">
+      <div class="panel-header">
+        <span class="panel-num">03</span>
+        <h2 class="panel-title">Confidence Distribution</h2>
+      </div>
+      <canvas id="confidenceChart"></canvas>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-section">
+      <div class="panel-header center">
+        <h2 class="section-title">How It Works</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">01</div>
+          <div class="how-icon">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 32L16 20L24 27L32 16L42 32" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Image Preprocessing</h3>
+          <p>Your image is resized to 224×224 pixels and normalized to a [0,1] tensor compatible with MobileNetV2 input requirements.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">02</div>
+          <div class="how-icon">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="4" y="16" width="8" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="20" y="10" width="8" height="28" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="36" y="14" width="8" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 24H20M28 24H36" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+          <h3>CNN Feature Extraction</h3>
+          <p>MobileNetV2's depthwise separable convolutions extract hierarchical features — edges, textures, shapes, and high-level semantics.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">03</div>
+          <div class="how-icon">
+            <svg viewBox="0 0 48 48" fill="none"><circle cx="12" cy="24" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="36" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="36" cy="36" r="5" stroke="currentColor" stroke-width="1.5"/><line x1="17" y1="24" x2="31" y2="14" stroke="currentColor" stroke-width="1"/><line x1="17" y1="24" x2="31" y2="35" stroke="currentColor" stroke-width="1"/></svg>
+          </div>
+          <h3>Softmax Classification</h3>
+          <p>The final dense layer with 1000 outputs applies Softmax to produce probability distributions across all ImageNet categories.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">04</div>
+          <div class="how-icon">
+            <svg viewBox="0 0 48 48" fill="none"><polyline points="6,38 14,22 22,30 30,16 38,24 42,18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="42" cy="18" r="3" fill="currentColor"/></svg>
+          </div>
+          <h3>Ranked Predictions</h3>
+          <p>Top-5 predictions are returned with confidence scores, helping you understand both the primary classification and alternative interpretations.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>NeuralEye — Powered by TensorFlow.js + MobileNetV2</span>
+      <span>All processing runs locally in your browser. No data is uploaded.</span>
+    </div>
+  </footer>
+
+  <!-- TensorFlow.js and MobileNet -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
