@@ -1,9 +1,5 @@
 # NeuralEye — Image Classification System
 
-A production-grade browser-based image classification web app powered by **TensorFlow.js** and **MobileNetV2**.
-
----
-
 ## Features
 
 - **1000-class ImageNet classification** using MobileNetV2 CNN
@@ -22,7 +18,6 @@ A production-grade browser-based image classification web app powered by **Tenso
 ### Option 1 — Open directly (simplest)
 Just double-click `index.html` to open in your browser.
 
-> **Note:** Some browsers restrict loading TF.js models when opened as `file://`. If you see errors, use Option 2.
 
 ### Option 2 — Local server (recommended)
 
@@ -57,19 +52,15 @@ image-classifier/
 └── README.md
 ```
 
----
-
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| ML Framework | TensorFlow.js 4.11 |
-| Model | MobileNetV2 (ImageNet, 1000 classes) |
-| Charting | Chart.js 4.4 |
-| Fonts | Syne + Space Mono (Google Fonts) |
-| Runtime | 100% browser, no backend |
+ Layer  Technology 
+ ML Framework | TensorFlow.js 4.11 |
+ Model | MobileNetV2 (ImageNet, 1000 classes) |
+ Charting | Chart.js 4.4 |
+ Fonts | Syne + Space Mono (Google Fonts) |
+ Runtime | 100% browser, no backend |
 
----
 
 ## How It Works
 
@@ -78,7 +69,6 @@ image-classifier/
 3. **Softmax Classification** — Final dense layer outputs 1000-class probabilities
 4. **Ranked Results** — Top-10 predictions sorted by confidence
 
----
 
 ## Browser Support
 
@@ -86,8 +76,7 @@ Works in all modern browsers: Chrome, Firefox, Safari, Edge.
 Webcam requires HTTPS or localhost.
 
 ---
-
-## Notes
+Notes
 
 - First classification loads the MobileNetV2 model (~14 MB) from jsDelivr CDN
 - Subsequent classifications reuse the cached model (instant)
